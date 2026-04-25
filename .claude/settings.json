@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(where curl *)",
+      "Bash(curl --version)",
+      "Bash(curl -sS --compressed -L -A 'Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36' -H 'Accept-Language: pt-BR,pt;q=0.9' https://www.infoimoveis.com.br/busca/aluguel/casa/ms/campo-grande)",
+      "Bash(grep -oE 'R\\\\$[^<\"]{1,30}' /tmp/info.html)",
+      "Bash(grep -oE '[0-9]+\\\\s*m[²2][^<\"]{0,30}' /tmp/info.html)",
+      "Bash(grep -oE 'apiw\\\\.infoimoveis\\\\.com\\\\.br[^\"\\\\\\\\]{1,300}' /tmp/info.html)",
+      "Bash(grep -oE '.{50}apiw\\\\.infoimoveis[^\"]{0,500}' /tmp/info.html)",
+      "Bash(curl -sS --compressed --max-time 15 -A 'Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36' -H 'Origin: https://www.infoimoveis.com.br' -H 'Referer: https://www.infoimoveis.com.br/' 'https://apiw.infoimoveis.com.br/imoveis?cidade=campo-grande&estado=ms&transacao=aluguel&tipo=casa')",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('/tmp/api.json','utf8'\\)\\); console.log\\('top keys:', Object.keys\\(d\\)\\); console.log\\('type:', Array.isArray\\(d\\) ? 'array len='+d.length : typeof d\\); if\\(d.data\\) console.log\\('data keys:', Array.isArray\\(d.data\\)?'array len='+d.data.length:Object.keys\\(d.data\\)\\);\")",
+      "Bash(curl -sS --compressed --max-time 10 -A 'Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36' -H 'Origin: https://www.infoimoveis.com.br' -H 'Referer: https://www.infoimoveis.com.br/' 'https://apiw.infoimoveis.com.br/imoveis?cidade=campo-grande')",
+      "Bash(curl -sS --compressed --max-time 15 -A 'Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36' -H 'Origin: https://www.infoimoveis.com.br' -H 'Referer: https://www.infoimoveis.com.br/' 'https://apiw.infoimoveis.com.br/imoveis?cidade=campo-grande&limit=1')",
+      "Bash(node -e \"let s=''; process.stdin.on\\('data', d=>s+=d\\); process.stdin.on\\('end', \\(\\)=>{ const j=JSON.parse\\(s\\); console.log\\('top:', Object.keys\\(j\\)\\); console.log\\('pagination:', j.pagination\\); console.log\\('first listing keys:', Object.keys\\(j.data[0]\\)\\); console.log\\('first listing:', JSON.stringify\\(j.data[0], null, 2\\).slice\\(0, 1500\\)\\); }\\);\")",
+      "Bash(curl -sS --compressed --max-time 10 -A 'Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36' https://apiw.infoimoveis.com.br/imoveis/642531)",
+      "Bash(grep -oE 'https?://[^/\"\\\\\\\\]+/[^\"\\\\\\\\]*\\\\.\\(jpg|jpeg|png|webp\\)' /tmp/det.html)",
+      "Bash(npm uninstall *)",
+      "Bash(curl -sS --compressed --max-time 10 -A 'Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36' https://apiw.infoimoveis.com.br/imoveis/666669)",
+      "Bash(curl -sS --compressed --max-time 10 -A 'Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36' https://apiw.infoimoveis.com.br/imoveis/638708)",
+      "Bash(sort -u -t'\"' -k2 -n -r)",
+      "Bash(rm -rf cache)",
+      "Bash(rm -f state.json)",
+      "Bash(cat)",
+      "Bash(cp /tmp/test-loadstate.ts test-loadstate.ts)",
+      "Bash(rm test-loadstate.ts)",
+      "Bash(node -e \"let s=''; process.stdin.on\\('data',d=>s+=d\\); process.stdin.on\\('end',\\(\\)=>{ const j=JSON.parse\\(s\\); console.log\\('TOTAL casa-térrea aluguel R\\\\$2000-4500 em Campo Grande:', j.pagination.total\\); console.log\\('páginas \\(limit=20\\):', Math.ceil\\(j.pagination.total/20\\)\\); }\\);\")"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}
