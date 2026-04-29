@@ -47,8 +47,12 @@ export interface ScoreBreakdown {
   penalidades: number;
 }
 
+export type SourceId = 'infoimoveis' | 'olx';
+
 export interface Listing {
   id: string;
+  /** Site de onde veio o listing (`infoimoveis` | `olx` | ...) */
+  source?: SourceId;
   title: string;
   /** Tipo bruto da API ("Casa-Térrea", "Sobrado-Condomínio"...) — usado pra preferência */
   apiType?: string;

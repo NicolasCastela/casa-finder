@@ -4,6 +4,7 @@ import ora from 'ora';
 import chalk from 'chalk';
 import { writeFileSync } from 'node:fs';
 import { fetchPage, fetchDetail, mergeDetail, type FetchStats } from './infoimoveis.js';
+import { fetchAllListings as fetchOlxListings } from './olx.js';
 import {
   applyFilters,
   scoreListings,
@@ -23,7 +24,13 @@ import {
   STATE_FILE,
 } from './state.js';
 import { clearCache, cacheStats } from './cache.js';
-import type { SearchFilters, PropertyType, Transaction, SortBy, Listing } from './types.js';
+import type { SearchFilters, PropertyType, Transaction, SortBy, SourceId, Listing } from './types.js';
+
+const KNOWN_SOURCES: SourceId[] = ['infoimoveis', 'olx'];
+const SOURCE_LABEL: Record<SourceId, string> = {
+  infoimoveis: 'InfoImóveis',
+  olx: 'OLX',
+};
 
 const program = new Command();
 
@@ -60,6 +67,11 @@ program
   )
   .option('--prefer <type>', 'tipo preferido (bônus no score, não filtra)')
   .option('--sort-by <key>', 'score | neighborhood | price | area | ppsm', 'score')
+  .option(
+    '--sources <list>',
+    'sites a buscar (CSV: infoimoveis,olx). Default: ambos',
+    (v: string) => v.split(',').map((s) => s.trim().toLowerCase())
+  )
   .option('--max-pages <n>', 'páginas a buscar', (v) => Number(v), 5)
   .option('--no-enrich', 'pula fetch de detalhe (rápido, score raso)')
   .option('--only-new', 'mostra apenas imóveis não vistos em runs anteriores')
@@ -152,7 +164,17 @@ program
       sortBy: opts.sortBy as SortBy,
     };
 
+    // Sources a buscar
+    const requestedSources = (opts.sources as string[] | undefined) ?? KNOWN_SOURCES;
+    const enabledSources: SourceId[] = requestedSources
+      .filter((s): s is SourceId => (KNOWN_SOURCES as string[]).includes(s));
+    if (enabledSources.length === 0) {
+      console.error(chalk.red(`✗ --sources inválido. Use: ${KNOWN_SOURCES.join(', ')}`));
+      process.exit(1);
+    }
+
     console.log(chalk.bold(`\n🔍 ${filters.propertyType} para ${filters.transaction} em ${filters.city}/${filters.state.toUpperCase()}`));
+    console.log(chalk.gray(`   sites: ${enabledSources.map((s) => SOURCE_LABEL[s]).join(', ')}`));
     if (filters.priceMin || filters.priceMax) {
       console.log(chalk.gray(`   R$${filters.priceMin ?? 0}–${filters.priceMax ?? '∞'}/mês`));
     }
@@ -167,32 +189,61 @@ program
     }
     console.log();
 
-    // ---------- Fase 1: listagem paginada ----------
     const allListings: Listing[] = [];
     const errors: string[] = [];
-    const listStats: FetchStats = { cached: 0, fresh: 0 };
 
-    for (let page = 1; page <= (filters.maxPages ?? 5); page++) {
-      const spinner = ora(`Buscando página ${page}...`).start();
-      try {
-        const { listings, hasNextPage } = await fetchPage(filters, page, {
-          refresh: !!opts.refresh,
-          stats: listStats,
-        });
-        allListings.push(...listings);
-        spinner.succeed(`Página ${page}: ${listings.length} imóveis`);
-        if (!hasNextPage) {
-          spinner.info('Última página alcançada');
-          break;
+    // ---------- Fase 1: fetch por source ----------
+    for (const source of enabledSources) {
+      if (source === 'infoimoveis') {
+        const listStats: FetchStats = { cached: 0, fresh: 0 };
+        const before = allListings.length;
+        for (let page = 1; page <= (filters.maxPages ?? 5); page++) {
+          const spinner = ora(`InfoImóveis · página ${page}...`).start();
+          try {
+            const { listings, hasNextPage } = await fetchPage(filters, page, {
+              refresh: !!opts.refresh,
+              stats: listStats,
+            });
+            allListings.push(...listings);
+            spinner.succeed(`InfoImóveis · página ${page}: ${listings.length} imóveis`);
+            if (!hasNextPage) {
+              spinner.info('última página alcançada');
+              break;
+            }
+          } catch (err) {
+            const msg = (err as Error).message;
+            spinner.fail(`InfoImóveis · página ${page}: ${msg}`);
+            errors.push(`InfoImóveis pg${page}: ${msg}`);
+            if (page === 1) break;
+          }
         }
-      } catch (err) {
-        const msg = (err as Error).message;
-        spinner.fail(`Página ${page}: ${msg}`);
-        errors.push(`Página ${page}: ${msg}`);
-        if (page === 1) break;
+        console.log(
+          chalk.dim(
+            `📦 InfoImóveis: ${allListings.length - before} listings · cache ${listStats.cached} hits / ${listStats.fresh} fresh`
+          )
+        );
+      } else if (source === 'olx') {
+        const olxStats: FetchStats = { cached: 0, fresh: 0 };
+        const spinner = ora('OLX · buscando...').start();
+        try {
+          const olxListings = await fetchOlxListings(filters, {
+            refresh: !!opts.refresh,
+            stats: olxStats,
+          });
+          allListings.push(...olxListings);
+          spinner.succeed(`OLX: ${olxListings.length} imóveis`);
+        } catch (err) {
+          const msg = (err as Error).message;
+          spinner.fail(`OLX: ${msg}`);
+          errors.push(`OLX: ${msg}`);
+        }
+        console.log(
+          chalk.dim(
+            `📦 OLX: cache ${olxStats.cached} hits / ${olxStats.fresh} fresh`
+          )
+        );
       }
     }
-    console.log(chalk.dim(`📦 listagem: ${listStats.cached} cache hits / ${listStats.fresh} fresh`));
 
     let listings = deduplicate(allListings);
     listings = applyFilters(listings, filters);
@@ -209,29 +260,31 @@ program
       );
     }
 
-    // ---------- Fase 3: enrichment (detalhe por imóvel) ----------
-    if (opts.enrich !== false && listings.length > 0) {
-      console.log(chalk.gray(`\nEnriquecendo ${listings.length} imóveis com detalhes...`));
+    // ---------- Fase 3: enrichment (só InfoImóveis precisa) ----------
+    const toEnrich = listings.filter((l) => l.source === 'infoimoveis' && !l.enriched);
+    if (opts.enrich !== false && toEnrich.length > 0) {
+      console.log(chalk.gray(`\nEnriquecendo ${toEnrich.length} imóveis (InfoImóveis) com detalhes...`));
       const detailStats: FetchStats = { cached: 0, fresh: 0 };
       const spinner = ora('').start();
-      const enriched: Listing[] = [];
-      for (let i = 0; i < listings.length; i++) {
-        const l = listings[i]!;
-        spinner.text = `[${i + 1}/${listings.length}] ${l.title.slice(0, 50)}`;
+      const byId: Record<string, Listing> = {};
+      for (let i = 0; i < toEnrich.length; i++) {
+        const l = toEnrich[i]!;
+        spinner.text = `[${i + 1}/${toEnrich.length}] ${l.title.slice(0, 50)}`;
         try {
           const detail = await fetchDetail(l.id, {
             refresh: !!opts.refresh,
             stats: detailStats,
           });
-          enriched.push(detail ? mergeDetail(l, detail) : l);
+          byId[l.id] = detail ? mergeDetail(l, detail) : l;
         } catch (err) {
-          enriched.push(l);
+          byId[l.id] = l;
           errors.push(`Detalhe ${l.id}: ${(err as Error).message}`);
         }
       }
-      spinner.succeed(`Detalhes carregados (${enriched.filter((l) => l.enriched).length}/${enriched.length})`);
+      spinner.succeed(`Detalhes carregados (${Object.values(byId).filter((l) => l.enriched).length}/${toEnrich.length})`);
       console.log(chalk.dim(`📦 detalhes: ${detailStats.cached} cache hits / ${detailStats.fresh} fresh`));
-      listings = enriched;
+      // Substitui no array original
+      listings = listings.map((l) => byId[l.id] ?? l);
     }
 
     // ---------- Fase 4: score + sort ----------
@@ -246,9 +299,19 @@ program
 
     const final = opts.limit ? listings.slice(0, opts.limit) : listings;
 
+    // Sumário por source nos resultados finais
+    const bySource: Record<string, number> = {};
+    for (const l of final) {
+      const s = l.source ?? 'unknown';
+      bySource[s] = (bySource[s] || 0) + 1;
+    }
+    const bySourceStr = Object.entries(bySource)
+      .map(([s, n]) => `${SOURCE_LABEL[s as SourceId] ?? s} ${n}`)
+      .join(' · ');
+
     console.log(
       chalk.dim(
-        `\n${allListings.length} brutos · ${listings.length} após filtros · ${final.length} exibidos`
+        `\n${allListings.length} brutos · ${listings.length} após filtros · ${final.length} exibidos${bySourceStr ? ` (${bySourceStr})` : ''}`
       )
     );
 

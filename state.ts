@@ -21,8 +21,13 @@ export function loadState(): PersistedState {
   try {
     const raw = readFileSync(STATE_FILE, 'utf8');
     const parsed = JSON.parse(raw) as PersistedState;
+    // Migração: até v0.3 o ID era cru (ex: "666555"). Daí em diante é prefixado
+    // por source (ex: "infoimoveis-666555"). IDs sem hífen viram infoimoveis-*.
+    const migratedSeen = (Array.isArray(parsed.seen) ? parsed.seen : []).map((id) =>
+      /^[a-z]+-/.test(id) ? id : `infoimoveis-${id}`
+    );
     return {
-      seen: Array.isArray(parsed.seen) ? parsed.seen : [],
+      seen: migratedSeen,
       excludedNeighborhoods: Array.isArray(parsed.excludedNeighborhoods)
         ? parsed.excludedNeighborhoods
         : [],

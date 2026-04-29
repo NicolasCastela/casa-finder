@@ -260,6 +260,7 @@ function renderCard(l: Listing, idx: number, showTypeBadge: boolean): string {
   data-lat="${l.latitude ?? ''}"
   data-lng="${l.longitude ?? ''}"
   data-photos='${esc(photosJson)}'
+  data-source="${esc(l.source ?? '')}"
   tabindex="0">
   <div class="carousel">
     ${
@@ -274,7 +275,7 @@ function renderCard(l: Listing, idx: number, showTypeBadge: boolean): string {
     <div class="carousel-counter"><span class="cur">1</span> / ${photos.length}</div>`
         : ''
     }
-    <div class="card-rank">#${idx + 1}</div>
+    <div class="card-rank">#${idx + 1}${l.source ? ` · ${l.source === 'olx' ? 'OLX' : 'Info'}` : ''}</div>
     <div class="badge new-badge" aria-label="novo desde última visita">NOVO</div>
     <div class="badge score-badge" aria-label="Score ${score}">${score}</div>
     ${typeBadgeHtml}
@@ -919,11 +920,7 @@ main.content {
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 18px;
 }
-.grid > .card { animation: cardIn 350ms var(--ease-out) backwards; }
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+/* removed cardIn animation — com 319 cards no load era pesado */
 .grid.density-compact {
   display: flex;
   flex-direction: column;
@@ -967,6 +964,9 @@ main.content {
     box-shadow var(--d) var(--ease-out);
   outline: none;
   position: relative;
+  /* skip rendering offscreen cards — huge perf win em listas longas */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 540px;
 }
 .card:hover {
   transform: translateY(-3px);
@@ -981,20 +981,7 @@ main.content {
 .card.liked:hover { box-shadow: 0 0 0 1px var(--gold), var(--shadow-md); }
 .card.maybe { border-color: var(--maybe); }
 .card.hidden { opacity: 0.3; }
-.card.is-new::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: var(--radius-lg);
-  border: 2px solid var(--accent);
-  opacity: 0;
-  pointer-events: none;
-  animation: pulseNew 2.5s ease-out infinite;
-}
-@keyframes pulseNew {
-  0%, 100% { opacity: 0; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.005); }
-}
+/* sem outline pulsante extra — só o badge "NOVO" pulsa, mais leve */
 .card.compare-selected {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px var(--accent), var(--shadow-md);
@@ -1012,9 +999,8 @@ main.content {
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
-  transition: opacity var(--d-fast), transform 600ms var(--ease-out);
+  transition: opacity var(--d-fast);
 }
-.card:hover .carousel img { transform: scale(1.03); }
 .no-photo {
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
@@ -1056,7 +1042,6 @@ main.content {
   color: #fff;
   border-radius: 10px;
   font-size: 10px;
-  backdrop-filter: blur(4px);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1104,8 +1089,6 @@ main.content {
   background: rgba(0, 0, 0, 0.75);
   color: #fff;
   letter-spacing: -0.01em;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 .score-badge {
   top: 10px;
@@ -2211,6 +2194,7 @@ const SCRIPTS = `
       minScore: parseInt(minScoreInput.value, 10),
       hoods: Array.prototype.slice.call(document.querySelectorAll('input[name="hood"]:checked')).map(function(cb) { return cb.value; }),
       feats: Array.prototype.slice.call(document.querySelectorAll('input[name="feat"]:checked')).map(function(cb) { return cb.value; }),
+      sources: Array.prototype.slice.call(document.querySelectorAll('input[name="source"]:checked')).map(function(cb) { return cb.value; }),
       mark: (document.querySelector('input[name="mark-filter"]:checked') || {}).value || 'all',
       showHidden: document.getElementById('show-hidden').checked,
     };
@@ -2230,6 +2214,7 @@ const SCRIPTS = `
       var pass = true;
       if (score < f.minScore) pass = false;
       if (pass && f.hoods.length > 0 && f.hoods.indexOf(hoodSlug) === -1) pass = false;
+      if (pass && f.sources.length > 0 && f.sources.indexOf(c.dataset.source || '') === -1) pass = false;
       if (pass && f.feats.length > 0) {
         for (var i = 0; i < f.feats.length; i++) {
           if (features.indexOf(f.feats[i]) === -1) { pass = false; break; }
@@ -2269,6 +2254,10 @@ const SCRIPTS = `
       var label = (document.querySelector('input[name="feat"][value="' + fe + '"]') || {}).dataset.label || fe;
       pills.push({ label: '✓ ' + label, remove: function() { var cb = document.querySelector('input[name="feat"][value="' + fe + '"]'); if (cb) cb.checked = false; } });
     });
+    f.sources.forEach(function(s) {
+      var label = (document.querySelector('input[name="source"][value="' + s + '"]') || {}).dataset.label || s;
+      pills.push({ label: '🌐 ' + label, remove: function() { var cb = document.querySelector('input[name="source"][value="' + s + '"]'); if (cb) cb.checked = false; } });
+    });
     if (f.mark !== 'all') {
       var labels = { liked: '⭐ favoritos', maybe: '❓ talvez', hidden: '❌ ocultos', unmarked: '— não marcados' };
       pills.push({ label: 'mark: ' + labels[f.mark], remove: function() { var r = document.querySelector('input[name="mark-filter"][value="all"]'); if (r) { r.checked = true; r.dispatchEvent(new Event('change')); } } });
@@ -2297,13 +2286,21 @@ const SCRIPTS = `
     activeFilters.appendChild(clear);
   }
 
-  searchInput.addEventListener('input', applyFilters);
+  // Debounce search input — filtrar 319 cards a cada tecla é caro
+  var searchDebounce = null;
+  searchInput.addEventListener('input', function() {
+    if (searchDebounce) clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(applyFilters, 120);
+  });
   searchClear.addEventListener('click', function() { searchInput.value = ''; applyFilters(); searchInput.focus(); });
+  // Debounce range slider — drag gera muitos events
+  var rangeDebounce = null;
   minScoreInput.addEventListener('input', function() {
     minScoreLabel.textContent = minScoreInput.value;
-    applyFilters();
+    if (rangeDebounce) clearTimeout(rangeDebounce);
+    rangeDebounce = setTimeout(applyFilters, 100);
   });
-  document.querySelectorAll('input[name="hood"], input[name="feat"], input[name="mark-filter"], #show-hidden').forEach(function(el) {
+  document.querySelectorAll('input[name="hood"], input[name="feat"], input[name="source"], input[name="mark-filter"], #show-hidden').forEach(function(el) {
     el.addEventListener('change', applyFilters);
   });
   document.querySelectorAll('.mark-radio input').forEach(function(input) {
@@ -2332,7 +2329,7 @@ const SCRIPTS = `
     searchInput.value = '';
     minScoreInput.value = '0';
     minScoreLabel.textContent = '0';
-    document.querySelectorAll('input[name="hood"], input[name="feat"]').forEach(function(cb) { cb.checked = false; });
+    document.querySelectorAll('input[name="hood"], input[name="feat"], input[name="source"]').forEach(function(cb) { cb.checked = false; });
     var allRadio = document.querySelector('input[name="mark-filter"][value="all"]');
     if (allRadio) { allRadio.checked = true; allRadio.dispatchEvent(new Event('change')); }
     document.getElementById('show-hidden').checked = false;
@@ -2549,6 +2546,7 @@ export function toHtml(listings: Listing[], filters: SearchFilters): string {
 
   const hoodCounts: Record<string, { label: string; count: number }> = {};
   const featCounts: Record<string, number> = {};
+  const sourceCounts: Record<string, number> = {};
   for (const l of listings) {
     if (l.neighborhood) {
       const s = slug(l.neighborhood);
@@ -2560,7 +2558,12 @@ export function toHtml(listings: Listing[], filters: SearchFilters): string {
     for (const f of detectFeatures(l)) {
       featCounts[f] = (featCounts[f] || 0) + 1;
     }
+    if (l.source) sourceCounts[l.source] = (sourceCounts[l.source] || 0) + 1;
   }
+  const SOURCE_LABEL: Record<string, string> = {
+    infoimoveis: 'InfoImóveis',
+    olx: 'OLX',
+  };
   const sortedHoods = Object.entries(hoodCounts).sort((a, b) =>
     a[1].label.localeCompare(b[1].label, 'pt-BR')
   );
@@ -2579,6 +2582,14 @@ export function toHtml(listings: Listing[], filters: SearchFilters): string {
     .map(
       ([f, count]) =>
         `<label><input type="checkbox" name="feat" value="${esc(f)}" data-label="${esc(FEATURE_LABELS[f] ?? f)}"> <span class="name">${esc(FEATURE_LABELS[f] ?? f)}</span> <span class="count">${count}</span></label>`
+    )
+    .join('');
+
+  const sourcesHtml = Object.entries(sourceCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(
+      ([s, count]) =>
+        `<label><input type="checkbox" name="source" value="${esc(s)}" data-label="${esc(SOURCE_LABEL[s] ?? s)}"> <span class="name">${esc(SOURCE_LABEL[s] ?? s)}</span> <span class="count">${count}</span></label>`
     )
     .join('');
 
@@ -2675,6 +2686,15 @@ export function toHtml(listings: Listing[], filters: SearchFilters): string {
       <span class="range-value">≥ <span id="min-score-label">0</span></span>
     </div>
   </div>
+
+  ${
+    Object.keys(sourceCounts).length > 1
+      ? `<div class="sb-section">
+    <div class="sb-label">Site <span class="count-pill">${Object.keys(sourceCounts).length}</span></div>
+    <div class="checkbox-list">${sourcesHtml}</div>
+  </div>`
+      : ''
+  }
 
   <div class="sb-section">
     <div class="sb-label">Bairro <span class="count-pill">${sortedHoods.length}</span></div>

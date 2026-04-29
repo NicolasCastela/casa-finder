@@ -165,7 +165,8 @@ function mapSummary(api: ApiListSummary): Listing {
   const area = parseAreaPtBr(api.area_construida) ?? parseAreaPtBr(api.area_total);
   const price = api.valor || 0;
   return {
-    id: String(api.id),
+    id: `infoimoveis-${api.id}`,
+    source: 'infoimoveis',
     title: api.titulo || 'Sem título',
     apiType: api.tipo,
     price,
@@ -368,12 +369,13 @@ export interface FetchDetailOptions {
   stats?: FetchStats;
 }
 
-/** Fetch detalhe de um único imóvel por ID. Retorna o ApiDetail bruto. */
+/** Fetch detalhe de um único imóvel por ID. Aceita ID prefixado ou raw. */
 export async function fetchDetail(
   id: string,
   opts: FetchDetailOptions = {}
 ): Promise<ApiDetail | null> {
-  const url = `${API_BASE}/imoveis/${id}`;
+  const rawId = id.replace(/^infoimoveis-/, '');
+  const url = `${API_BASE}/imoveis/${rawId}`;
   let body: string;
   if (!opts.refresh) {
     const cached = readCache('detail', url);
