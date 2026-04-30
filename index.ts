@@ -49,7 +49,8 @@ program
   .option('--state <uf>', 'UF (sigla minúscula)', 'ms')
   .option('--city <slug>', 'cidade (slug, ex: campo-grande)', 'campo-grande')
   .option('--price-min <n>', 'preço mínimo em R$', (v) => Number(v))
-  .option('--price-max <n>', 'preço máximo em R$', (v) => Number(v))
+  .option('--price-max <n>', 'preço máximo em R$ (aluguel base, server-side)', (v) => Number(v))
+  .option('--total-max <n>', 'custo total mensal máx em R$ (aluguel + cond + IPTU/12, pós-enrichment)', (v) => Number(v))
   .option('--area-min <n>', 'área mínima em m²', (v) => Number(v))
   .option('--area-max <n>', 'área máxima em m²', (v) => Number(v))
   .option('--bedrooms-min <n>', 'quartos mínimos', (v) => Number(v))
@@ -152,6 +153,7 @@ program
       city: opts.city,
       priceMin: opts.priceMin,
       priceMax: opts.priceMax,
+      totalMax: opts.totalMax,
       areaMin: opts.areaMin,
       areaMax: opts.areaMax,
       bedroomsMin: opts.bedroomsMin,
@@ -285,6 +287,22 @@ program
       console.log(chalk.dim(`📦 detalhes: ${detailStats.cached} cache hits / ${detailStats.fresh} fresh`));
       // Substitui no array original
       listings = listings.map((l) => byId[l.id] ?? l);
+    }
+
+    // ---------- Fase 3.5: filtro de custo total mensal (pós-enrichment) ----------
+    if (filters.totalMax) {
+      const before = listings.length;
+      listings = listings.filter((l) => {
+        const total = l.totalMonthly ?? l.price;
+        // Ignora listings sem preço ("sob consulta") quando filtro de total tá ativo
+        return total > 0 && total <= filters.totalMax!;
+      });
+      const cut = before - listings.length;
+      if (cut > 0) {
+        console.log(
+          chalk.dim(`💰 total-max R$${filters.totalMax}: ${cut} cortados (${listings.length} restam)`)
+        );
+      }
     }
 
     // ---------- Fase 4: score + sort ----------

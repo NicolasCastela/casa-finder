@@ -202,15 +202,25 @@ function renderScoreBar(b: ScoreBreakdown | undefined): string {
   return `<div class="score-bar" title="${esc(tooltipText)}" aria-label="Composição do score: ${esc(tooltipText)}">${html}</div>`;
 }
 
-/** SVG inline icons — small, optimized */
+/** SVG inline icons — Lucide-style, stroke 2px, currentColor */
 const ICONS: Record<string, string> = {
-  bed: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9V20"/><path d="M22 20V11a2 2 0 0 0-2-2H6"/><path d="M2 15h20"/><path d="M6 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>',
-  bath: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5 1.5 1.5 0 0 0-1.5 1.5V12"/><line x1="10" x2="8" y1="5" y2="7"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="7" x2="7" y1="19" y2="21"/><line x1="17" x2="17" y1="19" y2="21"/><path d="M5 16v-1a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/></svg>',
-  car: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>',
-  ruler: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>',
-  pin: '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
-  star: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-  check: '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  bed: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9V20"/><path d="M22 20V11a2 2 0 0 0-2-2H6"/><path d="M2 15h20"/><path d="M6 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>',
+  bath: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5 1.5 1.5 0 0 0-1.5 1.5V12"/><line x1="10" x2="8" y1="5" y2="7"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="7" x2="7" y1="19" y2="21"/><line x1="17" x2="17" y1="19" y2="21"/><path d="M5 16v-1a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/></svg>',
+  car: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>',
+  ruler: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  star: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  starFilled: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  check: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  help: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+  eyeOff: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>',
+  pencil: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>',
+  externalLink: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+  map: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18 3 21V6l6-3 6 3 6-3v15l-6 3z"/><path d="M9 3v15"/><path d="M15 6v15"/></svg>',
+  scale: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
+  layoutGrid: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+  list: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>',
+  circle: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>',
 };
 
 /** Renders a single card */
@@ -284,22 +294,20 @@ function renderCard(l: Listing, idx: number, showTypeBadge: boolean): string {
       <span class="compare-box" aria-hidden="true"></span>
     </label>
     <div class="note-indicator hidden" title="tem nota">📝</div>
-    <div class="photo-overlay">
-      <div class="overlay-price">
-        <strong class="numeric">${esc(fmtBRL(totalMonthly))}</strong>
-        <span class="overlay-label">${hasExtras ? '/mês total' : '/mês'}</span>
-      </div>
-      ${l.pricePerSqm ? `<div class="overlay-ppsm numeric">R$${l.pricePerSqm}/m²</div>` : ''}
-    </div>
   </div>
   <div class="card-body">
     <h3 class="card-title">${esc(l.title)}</h3>
+    <div class="price-row">
+      <span class="price-hero numeric">${esc(fmtBRL(totalMonthly))}</span>
+      <span class="price-hero-label">${hasExtras ? '/mês total' : '/mês'}</span>
+      ${l.pricePerSqm ? `<span class="price-ppsm">R$${l.pricePerSqm}/m²</span>` : ''}
+    </div>
     ${renderScoreBar(breakdown)}
     <div class="specs-row">${specsHtml.join('')}</div>
     ${
       hasExtras
         ? `<div class="cost-line numeric">
-        ${esc(fmtBRL(l.price))} de aluguel${l.condoFee ? ` + ${esc(fmtBRL(l.condoFee))} cond.` : ''}${l.iptu ? ` + ${esc(fmtBRL(l.iptu))} IPTU` : ''}
+        ${esc(fmtBRL(l.price))} aluguel${l.condoFee ? ` + ${esc(fmtBRL(l.condoFee))} cond.` : ''}${l.iptu ? ` + ${esc(fmtBRL(l.iptu))} IPTU` : ''}
       </div>`
         : ''
     }
@@ -320,15 +328,15 @@ function renderCard(l: Listing, idx: number, showTypeBadge: boolean): string {
         : ''
     }
     <div class="actions">
-      <button class="btn-mark btn-mark-liked" data-mark="liked" title="Gostei (s)" aria-label="Marcar como gostei">⭐</button>
-      <button class="btn-mark btn-mark-maybe" data-mark="maybe" title="Talvez (m)" aria-label="Marcar como talvez">❓</button>
-      <button class="btn-mark btn-mark-hidden" data-mark="hidden" title="Esconder (n)" aria-label="Esconder">❌</button>
-      <button class="btn-icon btn-note-toggle" title="Adicionar nota" aria-label="Adicionar nota">📝</button>
+      <button class="btn-mark btn-mark-liked" data-mark="liked" title="Gostei (s)" aria-label="Marcar como gostei">${ICONS.star}</button>
+      <button class="btn-mark btn-mark-maybe" data-mark="maybe" title="Talvez (m)" aria-label="Marcar como talvez">${ICONS.help}</button>
+      <button class="btn-mark btn-mark-hidden" data-mark="hidden" title="Esconder (n)" aria-label="Esconder">${ICONS.eyeOff}</button>
+      <button class="btn-icon btn-note-toggle" title="Adicionar nota" aria-label="Adicionar nota">${ICONS.pencil}</button>
       <span class="actions-spacer"></span>
-      <a class="btn-icon btn-open" href="${esc(l.url)}" target="_blank" rel="noopener" title="Abrir anúncio (Enter)" aria-label="Abrir anúncio">↗</a>
+      <a class="btn-icon btn-open" href="${esc(l.url)}" target="_blank" rel="noopener" title="Abrir anúncio (Enter)" aria-label="Abrir anúncio">${ICONS.externalLink}</a>
       ${
         l.latitude && l.longitude
-          ? `<a class="btn-icon btn-map" href="https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longitude}" target="_blank" rel="noopener" title="Google Maps" aria-label="Abrir no Google Maps">🗺</a>`
+          ? `<a class="btn-icon btn-map" href="https://www.google.com/maps/search/?api=1&query=${l.latitude},${l.longitude}" target="_blank" rel="noopener" title="Google Maps" aria-label="Abrir no Google Maps">${ICONS.map}</a>`
           : ''
       }
     </div>
@@ -350,7 +358,7 @@ function renderCard(l: Listing, idx: number, showTypeBadge: boolean): string {
 const STYLES = `
 * { box-sizing: border-box; }
 :root {
-  /* Backgrounds */
+  /* Backgrounds (DARK default) */
   --bg-0: #0a0d12;
   --bg-1: #11151b;
   --bg-2: #161a21;
@@ -384,6 +392,47 @@ const STYLES = `
   --gold: #fbbf24;
   --maybe: #c084fc;
   --danger: #ef4444;
+
+  /* Theme-aware overlays — usados em backdrop blurs do topbar/active-filters */
+  --overlay-topbar: rgba(10, 13, 18, 0.85);
+  --overlay-filters: rgba(17, 21, 27, 0.92);
+  --shadow-card: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] {
+  --bg-0: #f7f8fa;
+  --bg-1: #ffffff;
+  --bg-2: #ffffff;
+  --bg-3: #f1f3f5;
+  --bg-4: #e9ecef;
+
+  --border-1: #e5e7eb;
+  --border-2: #d1d5db;
+  --border-strong: #9ca3af;
+
+  --text-1: #111827;
+  --text-2: #374151;
+  --text-3: #6b7280;
+  --text-4: #9ca3af;
+
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+  --accent-soft: rgba(37, 99, 235, 0.08);
+
+  --great: #059669;
+  --good: #65a30d;
+  --ok: #d97706;
+  --low: #6b7280;
+
+  --gold: #d97706;
+  --maybe: #7c3aed;
+  --danger: #dc2626;
+
+  --overlay-topbar: rgba(255, 255, 255, 0.88);
+  --overlay-filters: rgba(247, 248, 250, 0.92);
+  --shadow-card: rgba(15, 23, 42, 0.08);
+}
 
   /* Score breakdown segment colors */
   --seg-preco: #3b82f6;
@@ -445,7 +494,7 @@ body {
     "Helvetica Neue",
     Arial,
     sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -470,7 +519,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 /* Layout */
 .app {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 300px 1fr;
   grid-template-rows: auto auto 1fr;
   grid-template-areas: "header header" "filters filters" "sidebar main";
   min-height: 100vh;
@@ -482,7 +531,7 @@ header.topbar {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(10, 13, 18, 0.85);
+  background: var(--overlay-topbar);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   border-bottom: 1px solid var(--border-1);
@@ -495,20 +544,33 @@ header.topbar {
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--gap-2);
+  gap: 12px;
 }
 .brand-logo {
-  width: 28px; height: 28px;
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
-  border-radius: 8px;
+  width: 36px; height: 36px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-glow);
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  color: #fff;
-  font-weight: 700;
-  font-size: 13px;
-  box-shadow: 0 2px 8px var(--accent-glow);
+  color: var(--accent);
 }
-.brand-text h1 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-.brand-text .subtitle { color: var(--text-3); font-size: 11px; }
+.brand-logo svg { display: block; }
+.brand-text h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  line-height: 1.1;
+}
+.brand-text .subtitle {
+  color: var(--text-3);
+  font-size: 12px;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.brand-text .subtitle .sep { margin: 0 6px; color: var(--text-4); }
+.brand-text .subtitle strong { color: var(--text-2); font-weight: 600; }
 .grow { flex: 1; }
 
 .tabs {
@@ -552,6 +614,10 @@ header.topbar {
   transition: all var(--d-fast) var(--ease-out);
 }
 .btn-help:hover { color: var(--text-1); border-color: var(--border-2); }
+.btn-help svg { display: block; }
+#btn-theme .ic-sun { display: none; }
+[data-theme="light"] #btn-theme .ic-moon { display: none; }
+[data-theme="light"] #btn-theme .ic-sun { display: block; }
 
 /* Active filter pills bar */
 .active-filters {
@@ -559,7 +625,7 @@ header.topbar {
   position: sticky;
   top: 56px;
   z-index: 50;
-  background: rgba(17, 21, 27, 0.92);
+  background: var(--overlay-filters);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border-1);
@@ -625,39 +691,170 @@ aside.sidebar {
   grid-area: sidebar;
   background: var(--bg-1);
   border-right: 1px solid var(--border-1);
-  padding: 16px;
+  padding: 18px;
   overflow-y: auto;
   height: calc(100vh - 96px);
   position: sticky;
   top: 96px;
   scrollbar-width: thin;
   scrollbar-color: var(--border-2) transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 aside.sidebar::-webkit-scrollbar { width: 6px; }
 aside.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
-.sb-section {
-  margin-bottom: 18px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border-1);
+
+/* Hero search — sem card, peso alto */
+.sb-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.sb-section:last-child { border: none; }
-.sb-label {
-  font-size: 10px;
+.sb-hero .search-box { width: 100%; }
+.sb-hero .sort-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.sb-hero .sort-pills button {
+  padding: 5px 11px;
+  background: transparent;
+  color: var(--text-3);
+  border: 1px solid var(--border-1);
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all var(--d-fast);
+}
+.sb-hero .sort-pills button:hover {
+  background: var(--bg-3);
+  color: var(--text-1);
+  border-color: var(--border-2);
+}
+.sb-hero .sort-pills button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Stats hero — visual pesado */
+.sb-stats-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.sb-stats-card .heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.sb-stats-card .heading h4 {
+  margin: 0;
+  font-size: 12px;
   text-transform: uppercase;
-  color: var(--text-4);
+  color: var(--text-3);
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.sb-stats-card .total {
+  font-size: 11px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.sb-stats-card .total .num {
+  color: var(--text-1);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Filters mega-card — todos os filtros agrupados */
+.sb-filters {
+  background: var(--bg-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius);
+  padding: 14px 16px 8px;
+}
+.sb-filters > .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.sb-filters > .head h4 {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.sb-sub {
+  padding: 12px 0;
+  border-top: 1px solid var(--border-1);
+}
+.sb-sub:first-of-type { border-top: none; padding-top: 0; }
+.sb-sub-label {
+  font-size: 11px;
+  color: var(--text-3);
   margin: 0 0 8px;
-  letter-spacing: 0.06em;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: default;
 }
-.sb-label .count-pill {
+.sb-sub-label .count-pill {
   background: var(--bg-3);
+  color: var(--text-2);
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Collapsible (<details>) */
+details.sb-collapse > summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 11px;
   color: var(--text-3);
-  padding: 1px 6px;
-  border-radius: 8px;
+  margin: 0 0 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  padding: 4px 0;
+}
+details.sb-collapse > summary::-webkit-details-marker { display: none; }
+details.sb-collapse > summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 6px;
+  transition: transform var(--d-fast);
+  color: var(--text-4);
   font-size: 9px;
+}
+details.sb-collapse[open] > summary::before { transform: rotate(90deg); }
+details.sb-collapse > summary:hover { color: var(--text-1); }
+details.sb-collapse > summary .left { flex: 1; display: flex; align-items: center; }
+details.sb-collapse[open] > summary { color: var(--text-1); }
+
+/* Active count badge (when filters in this section are checked) */
+.active-badge {
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin-left: 6px;
 }
 
 .search-box { position: relative; }
@@ -669,12 +866,12 @@ aside.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-rad
 }
 .search-input {
   width: 100%;
-  padding: 8px 30px 8px 32px;
-  background: var(--bg-2);
+  padding: 10px 32px 10px 34px;
+  background: var(--bg-0);
   color: var(--text-1);
   border: 1px solid var(--border-1);
-  border-radius: var(--radius-sm);
-  font-size: 12px;
+  border-radius: 8px;
+  font-size: 13px;
   transition: all var(--d-fast);
 }
 .search-input::placeholder { color: var(--text-4); }
@@ -700,13 +897,13 @@ aside.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-rad
 .sort-buttons button {
   flex: 1 1 calc(50% - 2px);
   min-width: 0;
-  padding: 6px 8px;
-  background: var(--bg-2);
+  padding: 7px 10px;
+  background: var(--bg-0);
   color: var(--text-2);
   border: 1px solid var(--border-1);
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   transition: all var(--d-fast);
 }
@@ -724,9 +921,9 @@ aside.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-rad
 }
 .stats-track {
   display: flex;
-  height: 8px;
+  height: 10px;
   background: var(--bg-3);
-  border-radius: 4px;
+  border-radius: 5px;
   overflow: hidden;
 }
 .stats-seg {
@@ -741,19 +938,24 @@ aside.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-rad
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 6px 8px;
-  margin-top: 10px;
-  font-size: 11px;
+  margin-top: 12px;
+  font-size: 12px;
 }
 .stats-legend > div {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: var(--text-3);
+  gap: 7px;
+  color: var(--text-2);
   cursor: pointer;
-  padding: 3px 5px;
-  border-radius: 4px;
+  padding: 5px 7px;
+  border-radius: 6px;
   transition: background var(--d-fast);
 }
+.stats-legend .ic { display: inline-flex; color: var(--text-3); }
+.stats-legend [data-filter="liked"] .ic { color: var(--gold); }
+.stats-legend [data-filter="maybe"] .ic { color: var(--maybe); }
+.stats-legend [data-filter="hidden"] .ic { color: var(--text-4); }
+.stats-legend [data-filter="unmarked"] .ic { color: var(--text-4); }
 .stats-legend > div:hover { background: var(--bg-3); color: var(--text-1); }
 .stats-legend .dot {
   width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
@@ -768,17 +970,21 @@ aside.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-rad
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+.mark-radio svg { display: inline-block; vertical-align: middle; }
+.mark-radio.active svg { color: #fff; }
+.tab svg { display: inline-block; vertical-align: middle; margin-right: 2px; }
+.compare-fab svg { display: block; }
 
 /* Mark filter radio chips */
 .mark-radio-group { display: flex; flex-wrap: wrap; gap: 4px; }
 .mark-radio {
   flex: 1 1 calc(50% - 2px);
-  padding: 6px 8px;
-  background: var(--bg-2);
+  padding: 7px 10px;
+  background: var(--bg-0);
   border: 1px solid var(--border-1);
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-2);
   text-align: center;
   transition: all var(--d-fast);
@@ -820,11 +1026,11 @@ aside.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-rad
 .checkbox-list label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
-  border-radius: 4px;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-2);
   transition: background var(--d-fast);
 }
@@ -833,9 +1039,55 @@ aside.sidebar::-webkit-scrollbar-thumb { background: var(--border-2); border-rad
 .checkbox-list label .count {
   color: var(--text-4);
   font-variant-numeric: tabular-nums;
-  font-size: 10px;
+  font-size: 11px;
 }
-.checkbox-list input[type="checkbox"] { accent-color: var(--accent); }
+.checkbox-list input[type="checkbox"],
+#show-hidden {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-0);
+  border: 1.5px solid var(--border-2);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background var(--d-fast), border-color var(--d-fast);
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+.checkbox-list input[type="checkbox"]:hover,
+#show-hidden:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-3);
+}
+.checkbox-list input[type="checkbox"]:checked,
+#show-hidden:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.checkbox-list input[type="checkbox"]:checked::after,
+#show-hidden:checked::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-size: 11px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.checkbox-list input[type="checkbox"]:focus-visible,
+#show-hidden:focus-visible {
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  outline: none;
+  border-color: var(--accent);
+}
+.checkbox-list label.has-checked {
+  background: var(--accent-soft);
+  color: var(--text-1);
+}
 
 .btn-reset {
   width: 100%;
@@ -914,10 +1166,10 @@ main.content {
 }
 .btn-shortcut:hover { color: var(--text-1); border-color: var(--border-2); }
 
-/* Grid */
+/* Grid — cards horizontais largos por padrão */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(560px, 1fr));
   gap: 18px;
 }
 /* removed cardIn animation — com 319 cards no load era pesado */
@@ -927,6 +1179,9 @@ main.content {
   gap: 6px;
   max-width: 1200px;
   margin: 0 auto;
+}
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
 }
 
 .empty-state {
@@ -950,14 +1205,14 @@ main.content {
 }
 .empty-state button:hover { background: var(--accent-hover); }
 
-/* CARD */
+/* CARD — horizontal por padrão (foto esquerda, info direita) */
 .card {
   background: var(--bg-2);
   border: 1px solid var(--border-1);
   border-radius: var(--radius-lg);
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   transition:
     transform var(--d) var(--ease-out),
     border-color var(--d) var(--ease-out),
@@ -966,7 +1221,10 @@ main.content {
   position: relative;
   /* skip rendering offscreen cards — huge perf win em listas longas */
   content-visibility: auto;
-  contain-intrinsic-size: auto 540px;
+  contain-intrinsic-size: auto 280px;
+}
+@media (max-width: 600px) {
+  .card { flex-direction: column; }
 }
 .card:hover {
   transform: translateY(-3px);
@@ -987,13 +1245,18 @@ main.content {
   box-shadow: 0 0 0 2px var(--accent), var(--shadow-md);
 }
 
-/* Carousel */
+/* Carousel — foto esquerda, fixed width em horizontal */
 .carousel {
   position: relative;
-  aspect-ratio: 16/10;
+  width: 240px;
+  flex-shrink: 0;
+  aspect-ratio: 4/3;
   background: #000;
   overflow: hidden;
   cursor: zoom-in;
+}
+@media (max-width: 600px) {
+  .carousel { width: 100%; aspect-ratio: 16/10; }
 }
 .carousel img {
   width: 100%; height: 100%;
@@ -1045,39 +1308,8 @@ main.content {
   font-variant-numeric: tabular-nums;
 }
 
-/* Photo overlay (bottom gradient with price) */
-.photo-overlay {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  padding: 28px 12px 10px;
-  background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.4) 60%, transparent);
-  color: #fff;
-  pointer-events: none;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 8px;
-}
-.overlay-price strong {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  display: block;
-  line-height: 1.1;
-}
-.overlay-label {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.02em;
-}
-.overlay-ppsm {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
+/* Photo overlay — escondido no horizontal layout, preço foi pro card body */
+.photo-overlay { display: none; }
 
 /* Badges */
 .badge {
@@ -1192,37 +1424,63 @@ main.content {
 
 /* Card body */
 .card-body {
-  padding: 14px 16px;
+  padding: 16px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  min-width: 0; /* permite truncate em flex */
 }
 .card-title {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.35;
   color: var(--text-1);
-  letter-spacing: -0.005em;
+  letter-spacing: -0.01em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.price-hero {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  line-height: 1;
+}
+.price-hero-label {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.price-ppsm {
+  font-size: 12px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
 
 /* Score breakdown bar */
 .score-bar {
   display: flex;
-  height: 4px;
+  height: 5px;
   background: var(--bg-4);
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
   margin-top: 2px;
   transition: height var(--d-fast);
   cursor: help;
 }
-.score-bar:hover { height: 6px; }
+.score-bar:hover { height: 7px; }
 .sb-seg { height: 100%; transition: opacity var(--d-fast); }
 .score-bar:hover .sb-seg { opacity: 0.7; }
 .score-bar:hover .sb-seg:hover { opacity: 1; }
@@ -1239,44 +1497,43 @@ main.content {
 .specs-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-2);
-  margin-top: 2px;
 }
 .spec {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-variant-numeric: tabular-nums;
 }
-.spec svg { color: var(--text-3); }
+.spec svg { color: var(--text-3); width: 15px; height: 15px; }
 .spec-accent { color: var(--gold); font-weight: 600; }
 
 .cost-line {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-3);
 }
 
 .meta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 10px;
+  gap: 8px 12px;
   align-items: center;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-3);
 }
 .hood-pill {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: var(--bg-3);
-  color: var(--text-1);
-  border: 1px solid var(--border-1);
-  padding: 3px 9px;
+  gap: 5px;
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border-2);
+  padding: 3px 10px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
   transition: all var(--d-fast);
 }
@@ -1284,62 +1541,61 @@ main.content {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-  transform: translateY(-1px);
 }
 .address {
-  color: var(--text-4);
-  font-size: 11px;
+  color: var(--text-3);
+  font-size: 12px;
 }
 
 .feature-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 5px;
 }
 .chip {
-  font-size: 10px;
-  padding: 2px 8px;
-  background: rgba(132, 204, 22, 0.12);
-  color: #a3e635;
-  border: 1px solid rgba(132, 204, 22, 0.25);
-  border-radius: 10px;
+  font-size: 11px;
+  padding: 3px 10px;
+  background: var(--bg-3);
+  color: var(--text-2);
+  border: 1px solid var(--border-1);
+  border-radius: 12px;
   cursor: pointer;
   transition: all var(--d-fast);
   font-weight: 500;
 }
 .chip:hover {
-  background: rgba(132, 204, 22, 0.25);
-  border-color: rgba(132, 204, 22, 0.5);
-  transform: translateY(-1px);
+  background: var(--bg-4);
+  border-color: var(--border-2);
+  color: var(--text-1);
 }
 
 .reasons {
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  font-size: 11px;
-  color: var(--great);
-  line-height: 1.45;
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.5;
 }
-.reasons svg { flex-shrink: 0; margin-top: 2px; }
+.reasons svg { flex-shrink: 0; margin-top: 2px; color: var(--great); }
 
 /* Actions */
 .actions {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 12px;
   border-top: 1px solid var(--border-1);
 }
 .actions-spacer { flex: 1; }
 .btn-mark, .btn-icon {
-  width: 32px; height: 32px;
+  width: 36px; height: 36px;
   background: var(--bg-3);
-  color: var(--text-2);
+  color: var(--text-3);
   border: 1px solid var(--border-1);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 15px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1347,6 +1603,7 @@ main.content {
   text-decoration: none;
   flex: 0 0 auto;
 }
+.btn-mark svg, .btn-icon svg { display: block; }
 .btn-mark:hover, .btn-icon:hover {
   background: var(--bg-4);
   border-color: var(--border-2);
@@ -1359,6 +1616,7 @@ main.content {
   border-color: var(--gold);
   color: var(--gold);
 }
+.btn-mark.active.btn-mark-liked svg polygon { fill: currentColor; }
 .btn-mark.active.btn-mark-maybe {
   background: rgba(192, 132, 252, 0.2);
   border-color: var(--maybe);
@@ -2244,25 +2502,25 @@ const SCRIPTS = `
   function updateActiveFilters() {
     var f = getFilterState();
     var pills = [];
-    if (f.q) pills.push({ label: '🔍 "' + f.q + '"', remove: function() { searchInput.value = ''; } });
-    if (f.minScore > 0) pills.push({ label: '📊 score ≥ ' + f.minScore, remove: function() { minScoreInput.value = '0'; minScoreLabel.textContent = '0'; } });
+    if (f.q) pills.push({ label: 'busca: "' + f.q + '"', remove: function() { searchInput.value = ''; } });
+    if (f.minScore > 0) pills.push({ label: 'score ≥ ' + f.minScore, remove: function() { minScoreInput.value = '0'; minScoreLabel.textContent = '0'; } });
     f.hoods.forEach(function(h) {
       var label = (document.querySelector('input[name="hood"][value="' + h + '"]') || {}).dataset.label || h;
-      pills.push({ label: '📍 ' + label, remove: function() { var cb = document.querySelector('input[name="hood"][value="' + h + '"]'); if (cb) cb.checked = false; } });
+      pills.push({ label: label, remove: function() { var cb = document.querySelector('input[name="hood"][value="' + h + '"]'); if (cb) cb.checked = false; } });
     });
     f.feats.forEach(function(fe) {
       var label = (document.querySelector('input[name="feat"][value="' + fe + '"]') || {}).dataset.label || fe;
-      pills.push({ label: '✓ ' + label, remove: function() { var cb = document.querySelector('input[name="feat"][value="' + fe + '"]'); if (cb) cb.checked = false; } });
+      pills.push({ label: label, remove: function() { var cb = document.querySelector('input[name="feat"][value="' + fe + '"]'); if (cb) cb.checked = false; } });
     });
     f.sources.forEach(function(s) {
       var label = (document.querySelector('input[name="source"][value="' + s + '"]') || {}).dataset.label || s;
-      pills.push({ label: '🌐 ' + label, remove: function() { var cb = document.querySelector('input[name="source"][value="' + s + '"]'); if (cb) cb.checked = false; } });
+      pills.push({ label: 'site: ' + label, remove: function() { var cb = document.querySelector('input[name="source"][value="' + s + '"]'); if (cb) cb.checked = false; } });
     });
     if (f.mark !== 'all') {
-      var labels = { liked: '⭐ favoritos', maybe: '❓ talvez', hidden: '❌ ocultos', unmarked: '— não marcados' };
-      pills.push({ label: 'mark: ' + labels[f.mark], remove: function() { var r = document.querySelector('input[name="mark-filter"][value="all"]'); if (r) { r.checked = true; r.dispatchEvent(new Event('change')); } } });
+      var labels = { liked: 'favoritos', maybe: 'talvez', hidden: 'ocultos', unmarked: 'sem marca' };
+      pills.push({ label: 'marca: ' + labels[f.mark], remove: function() { var r = document.querySelector('input[name="mark-filter"][value="all"]'); if (r) { r.checked = true; r.dispatchEvent(new Event('change')); } } });
     }
-    if (f.showHidden) pills.push({ label: '👁 mostrando ocultos', remove: function() { document.getElementById('show-hidden').checked = false; } });
+    if (f.showHidden) pills.push({ label: 'mostrando ocultos', remove: function() { document.getElementById('show-hidden').checked = false; } });
 
     if (pills.length === 0) {
       activeFilters.innerHTML = '';
@@ -2301,8 +2559,43 @@ const SCRIPTS = `
     rangeDebounce = setTimeout(applyFilters, 100);
   });
   document.querySelectorAll('input[name="hood"], input[name="feat"], input[name="source"], input[name="mark-filter"], #show-hidden').forEach(function(el) {
-    el.addEventListener('change', applyFilters);
+    el.addEventListener('change', function() {
+      applyFilters();
+      updateSectionBadges();
+      var label = el.closest('label');
+      if (label) label.classList.toggle('has-checked', el.checked);
+    });
   });
+
+  // Active count badge in collapsible section headers
+  function updateSectionBadges() {
+    var sections = [
+      { name: 'hoods', input: 'hood' },
+      { name: 'feats', input: 'feat' },
+    ];
+    sections.forEach(function(s) {
+      var det = document.querySelector('details.sb-collapse[data-section="' + s.name + '"]');
+      if (!det) return;
+      var summary = det.querySelector('summary');
+      if (!summary) return;
+      var checked = det.querySelectorAll('input[name="' + s.input + '"]:checked').length;
+      var existing = summary.querySelector('.active-badge');
+      if (checked > 0) {
+        if (!existing) {
+          var b = document.createElement('span');
+          b.className = 'active-badge';
+          b.textContent = String(checked);
+          summary.querySelector('.left').appendChild(b);
+        } else {
+          existing.textContent = String(checked);
+        }
+        // auto-open se tem filtro ativo
+        if (!det.open) det.open = true;
+      } else if (existing) {
+        existing.remove();
+      }
+    });
+  }
   document.querySelectorAll('.mark-radio input').forEach(function(input) {
     input.addEventListener('change', function() {
       document.querySelectorAll('.mark-radio').forEach(function(l) { l.classList.remove('active'); });
@@ -2396,7 +2689,11 @@ const SCRIPTS = `
     var map = L.map('map');
     window._casaMap = map;
 
-    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    var tileUrl = isLight
+      ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
+      : 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
+    L.tileLayer(tileUrl, {
       attribution: '© OpenStreetMap, © CARTO',
       maxZoom: 19,
       subdomains: 'abcd',
@@ -2519,9 +2816,33 @@ const SCRIPTS = `
     menuToggle.addEventListener('click', function() { sidebar.classList.toggle('open'); });
   }
 
+  // Theme toggle
+  var THEME_KEY = 'casa-finder-theme';
+  var btnTheme = document.getElementById('btn-theme');
+  function applyTheme(t) {
+    if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  if (btnTheme) {
+    btnTheme.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      var next = current === 'light' ? 'dark' : 'light';
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+      // re-render map tile if map view ativo
+      if (window._casaMap) {
+        try { window._casaMap.remove(); } catch(e) {}
+        window._casaMap = null;
+        mapInited = false;
+        if (app.classList.contains('view-map')) initMap();
+      }
+    });
+  }
+
   // Init
   updateStats();
   applyFilters();
+  updateSectionBadges();
   if (location.hash === '#map') setView('map');
   else setView('cards');
 })();
@@ -2601,8 +2922,19 @@ export function toHtml(listings: Listing[], filters: SearchFilters): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>casa-finder · ${esc(filterSummary)}</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b8def' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9.5 12 2l9 7.5V20a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V9.5Z'/%3E%3Ccircle cx='12' cy='11.5' r='1.5' fill='%235b8def'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function() {
+  try {
+    var saved = localStorage.getItem('casa-finder-theme');
+    var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    var theme = saved || (prefersLight ? 'light' : 'dark');
+    if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  } catch(e) {}
+})();
+</script>
 <style>${STYLES}</style>
 </head>
 <body>
@@ -2611,99 +2943,105 @@ export function toHtml(listings: Listing[], filters: SearchFilters): string {
 <header class="topbar" role="banner">
   <button class="menu-toggle" aria-label="abrir filtros">☰</button>
   <div class="brand">
-    <div class="brand-logo" aria-hidden="true">cf</div>
+    <div class="brand-logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 2l9 7.5V20a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V9.5Z"/><circle cx="12" cy="11.5" r="1.5" fill="currentColor"/></svg>
+    </div>
     <div class="brand-text">
       <h1>casa-finder</h1>
-      <div class="subtitle">${esc(filterSummary)} · ${listings.length} imóveis · ${esc(generatedAt)}</div>
+      <div class="subtitle"><strong>${listings.length}</strong> imóveis<span class="sep">·</span>${esc(filterSummary)}</div>
     </div>
   </div>
   <div class="grow"></div>
   <nav class="tabs" role="tablist" aria-label="Visualização">
-    <button class="tab active" data-view="cards" role="tab" aria-selected="true">📋 Cards</button>
-    <button class="tab" data-view="map" role="tab" aria-selected="false">🗺 Mapa</button>
+    <button class="tab active" data-view="cards" role="tab" aria-selected="true">${ICONS.layoutGrid} Cards</button>
+    <button class="tab" data-view="map" role="tab" aria-selected="false">${ICONS.map} Mapa</button>
   </nav>
+  <button class="btn-help" id="btn-theme" title="Alternar tema (claro/escuro)" aria-label="Alternar tema">
+    <svg class="ic-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="ic-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+  </button>
   <button class="btn-help" id="btn-help" onclick="document.getElementById('help').classList.toggle('hidden')" title="Atalhos de teclado (?)" aria-label="Atalhos de teclado">?</button>
 </header>
 
 <div class="active-filters" id="active-filters" aria-live="polite"></div>
 
 <aside class="sidebar" role="complementary">
-  <div class="sb-section">
-    <div class="sb-label">Buscar</div>
+  <!-- Hero: search + sort pills -->
+  <div class="sb-hero">
     <div class="search-box">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" class="search-input" id="search" placeholder="título, descrição, bairro..." aria-label="Buscar imóveis" />
+      <input type="text" class="search-input" id="search" placeholder="buscar título, bairro, descrição..." aria-label="Buscar imóveis" />
       <button class="search-clear" id="search-clear" aria-label="limpar busca">✕</button>
     </div>
-  </div>
-
-  <div class="sb-section">
-    <div class="sb-label">Ordenar por</div>
-    <div class="sort-buttons">
+    <div class="sort-pills" role="group" aria-label="Ordenar">
       <button data-sort="score" class="active">Score</button>
-      <button data-sort="neighborhood">Bairro</button>
       <button data-sort="price">Preço</button>
       <button data-sort="ppsm">R$/m²</button>
       <button data-sort="area">Área</button>
+      <button data-sort="neighborhood">Bairro</button>
     </div>
   </div>
 
-  <div class="sb-section">
-    <div class="sb-label">Triagem</div>
-    <div class="stats-bar">
-      <div class="stats-track" id="stats-track" aria-label="Distribuição de marcações">
-        <div class="stats-seg liked" style="flex-basis: 0%"></div>
-        <div class="stats-seg maybe" style="flex-basis: 0%"></div>
-        <div class="stats-seg hidden-seg" style="flex-basis: 0%"></div>
-        <div class="stats-seg unmarked" style="flex-basis: 100%"></div>
+  <!-- Stats hero -->
+  <div class="sb-stats-card">
+    <div class="heading">
+      <h4>Sua triagem</h4>
+      <span class="total"><span class="num" id="stats-total">${listings.length}</span> total</span>
+    </div>
+    <div class="stats-track" id="stats-track" aria-label="Distribuição de marcações">
+      <div class="stats-seg liked" style="flex-basis: 0%"></div>
+      <div class="stats-seg maybe" style="flex-basis: 0%"></div>
+      <div class="stats-seg hidden-seg" style="flex-basis: 0%"></div>
+      <div class="stats-seg unmarked" style="flex-basis: 100%"></div>
+    </div>
+    <div class="stats-legend">
+      <div data-filter="liked" id="legend-liked"><span class="ic">${ICONS.star}</span> favoritos <span class="num">0</span></div>
+      <div data-filter="maybe" id="legend-maybe"><span class="ic">${ICONS.help}</span> talvez <span class="num">0</span></div>
+      <div data-filter="hidden" id="legend-hidden"><span class="ic">${ICONS.eyeOff}</span> ocultos <span class="num">0</span></div>
+      <div data-filter="unmarked" id="legend-unmarked"><span class="ic">${ICONS.circle}</span> sem marca <span class="num">0</span></div>
+    </div>
+  </div>
+
+  <!-- Filters mega-card -->
+  <div class="sb-filters">
+    <div class="head"><h4>Filtros</h4></div>
+
+    <div class="sb-sub">
+      <div class="sb-sub-label">Marcação</div>
+      <div class="mark-radio-group">
+        <label class="mark-radio active"><input type="radio" name="mark-filter" value="all" checked hidden> Tudo</label>
+        <label class="mark-radio"><input type="radio" name="mark-filter" value="liked" hidden>${ICONS.star}</label>
+        <label class="mark-radio"><input type="radio" name="mark-filter" value="maybe" hidden>${ICONS.help}</label>
+        <label class="mark-radio"><input type="radio" name="mark-filter" value="unmarked" hidden> sem marca</label>
       </div>
-      <div class="stats-legend">
-        <div data-filter="liked" id="legend-liked"><span class="dot liked"></span> ⭐ favoritos <span class="num">0</span></div>
-        <div data-filter="maybe" id="legend-maybe"><span class="dot maybe"></span> ❓ talvez <span class="num">0</span></div>
-        <div data-filter="hidden" id="legend-hidden"><span class="dot hidden-seg"></span> ❌ ocultos <span class="num">0</span></div>
-        <div data-filter="unmarked" id="legend-unmarked"><span class="dot unmarked"></span> — sem marca <span class="num">0</span></div>
-      </div>
+      <label class="show-hidden-row">
+        <input type="checkbox" id="show-hidden"> mostrar ocultos (❌)
+      </label>
     </div>
-  </div>
 
-  <div class="sb-section">
-    <div class="sb-label">Filtrar por marcação</div>
-    <div class="mark-radio-group">
-      <label class="mark-radio active"><input type="radio" name="mark-filter" value="all" checked hidden> Tudo</label>
-      <label class="mark-radio"><input type="radio" name="mark-filter" value="liked" hidden> ⭐</label>
-      <label class="mark-radio"><input type="radio" name="mark-filter" value="maybe" hidden> ❓</label>
-      <label class="mark-radio"><input type="radio" name="mark-filter" value="unmarked" hidden> sem marca</label>
+    <div class="sb-sub">
+      <div class="sb-sub-label">Score mínimo <span class="range-value">≥ <span id="min-score-label">0</span></span></div>
+      <input type="range" id="min-score" min="0" max="100" value="0" step="1" aria-label="Score mínimo" style="width:100%;accent-color:var(--accent);">
     </div>
-    <label class="show-hidden-row">
-      <input type="checkbox" id="show-hidden"> mostrar ocultos (❌)
-    </label>
-  </div>
 
-  <div class="sb-section">
-    <div class="sb-label">Score mínimo</div>
-    <div class="range-row">
-      <input type="range" id="min-score" min="0" max="100" value="0" step="1" aria-label="Score mínimo">
-      <span class="range-value">≥ <span id="min-score-label">0</span></span>
-    </div>
-  </div>
+    ${
+      Object.keys(sourceCounts).length > 1
+        ? `<div class="sb-sub">
+      <div class="sb-sub-label">Site <span class="count-pill">${Object.keys(sourceCounts).length}</span></div>
+      <div class="checkbox-list">${sourcesHtml}</div>
+    </div>`
+        : ''
+    }
 
-  ${
-    Object.keys(sourceCounts).length > 1
-      ? `<div class="sb-section">
-    <div class="sb-label">Site <span class="count-pill">${Object.keys(sourceCounts).length}</span></div>
-    <div class="checkbox-list">${sourcesHtml}</div>
-  </div>`
-      : ''
-  }
+    <details class="sb-collapse sb-sub" data-section="hoods">
+      <summary><span class="left">Bairro</span> <span class="count-pill">${sortedHoods.length}</span></summary>
+      <div class="checkbox-list">${hoodsHtml || '<div style="color:var(--text-4);font-size:11px;">nenhum bairro</div>'}</div>
+    </details>
 
-  <div class="sb-section">
-    <div class="sb-label">Bairro <span class="count-pill">${sortedHoods.length}</span></div>
-    <div class="checkbox-list">${hoodsHtml || '<div style="color:var(--text-4);font-size:11px;">nenhum bairro</div>'}</div>
-  </div>
-
-  <div class="sb-section">
-    <div class="sb-label">Características <span class="count-pill">${sortedFeats.length}</span></div>
-    <div class="checkbox-list">${featsHtml || '<div style="color:var(--text-4);font-size:11px;">nenhuma característica detectada</div>'}</div>
+    <details class="sb-collapse sb-sub" data-section="feats">
+      <summary><span class="left">Características</span> <span class="count-pill">${sortedFeats.length}</span></summary>
+      <div class="checkbox-list">${featsHtml || '<div style="color:var(--text-4);font-size:11px;">nenhuma característica detectada</div>'}</div>
+    </details>
   </div>
 
   <button class="btn-reset" id="btn-reset">Resetar filtros</button>
@@ -2745,7 +3083,8 @@ export function toHtml(listings: Listing[], filters: SearchFilters): string {
 </div>
 
 <button class="compare-fab hidden" id="compare-fab" aria-label="Comparar imóveis selecionados">
-  <span>⚖ Comparar</span>
+  ${ICONS.scale}
+  <span>Comparar</span>
   <span class="fab-count">0</span>
 </button>
 

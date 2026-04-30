@@ -21,6 +21,8 @@ export interface SearchFilters {
   city: string;
   priceMin?: number;
   priceMax?: number;
+  /** Custo total mensal máximo (rent + cond + IPTU/12) — aplicado pós-enrichment */
+  totalMax?: number;
   areaMin?: number;
   areaMax?: number;
   bedroomsMin?: number;
